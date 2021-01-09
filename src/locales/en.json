@@ -1,10 +1,8 @@
 {
   "dashboard": {
-    "completedTasks": "Completed Tasks",
-    "dailySales": "Daily Sales",
-    "performance": "Performance",
-    "simpleTable": "Simple Table",
+    "revenueTable": "Revenue by district",
     "totalShipments": "Total Shipments",
+    "totalRevenue": "Total Revenue (Millions Unit)",
     "chartCategories": [
       "Accounts",
       "Purchases",
