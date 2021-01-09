@@ -15,6 +15,9 @@
             v-if="hasValue(item, column)">
           {{itemValue(item, column)}}
         </td>
+        <td v-if="viewAction">
+          <a href="#" v-on:click="viewOrderHistory(item.phone)">View Orders</a>
+        </td>
       </slot>
     </tr>
     </tbody>
@@ -48,6 +51,11 @@
         type: String,
         default: '',
         description: "<tbody> css classes"
+      },
+      viewOrders: { type: Function },
+      viewAction: {
+        type: Boolean,
+        default: false
       }
     },
     computed: {
@@ -61,6 +69,9 @@
       },
       itemValue(item, column) {
         return item[column.toLowerCase()];
+      },
+      viewOrderHistory(customerID) {
+        this.viewOrders(customerID)
       }
     }
   };
