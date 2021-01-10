@@ -18,23 +18,19 @@
           </div>
         </card>
       </div>
-      
-      <div class="col-lg-6 col-md-12" :class="{'text-right': isRTL}">
-        <card type="chart">
-          <template slot="header">
-            <h5 class="card-category">{{$t('dashboard.completedTasks')}}</h5>
-            <h3 class="card-title"><i class="tim-icons icon-send text-success "></i> 12,100K</h3>
-          </template>
-          <div class="chart-area">
-            <!-- chart here -->
-          </div>
-        </card>
-      </div>
 
     </div>
     
     <div class="row">
-      
+      <div class="col-lg-6 col-md-12">
+        <card class="card" :header-classes="{'text-right': isRTL}">
+          <h4 slot="header" class="card-title">{{$t('dashboard.revenueCustomerTable')}}</h4>
+          <div class="table-responsive" style="max-height:465px;">
+            <revenue-customer-table></revenue-customer-table>
+          </div>
+        </card>
+      </div>
+
       <div class="col-lg-6 col-md-12">
         <card class="card" :header-classes="{'text-right': isRTL}">
           <h4 slot="header" class="card-title">{{$t('dashboard.revenueTable')}}</h4>
@@ -44,13 +40,14 @@
         </card>
       </div>
     </div>
+
   </div>
 </template>
 <script>
   import LineChart from '@/components/Charts/LineChart';
-  import BarChart from '@/components/Charts/BarChart';
   import * as chartConfigs from '@/components/Charts/config';
   import RevenueTable from './Dashboard/RevenueTable';
+  import RevenueCustomerTable from './Dashboard/RevenueCustomerTable';
 
   import config from '@/config';
   import axios from "axios"
@@ -58,8 +55,8 @@
   export default {
     components: {
       LineChart,
-      BarChart,
       RevenueTable,
+      RevenueCustomerTable
     },
     data() {
       return {

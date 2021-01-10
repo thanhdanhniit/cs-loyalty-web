@@ -1,6 +1,7 @@
 {
   "dashboard": {
-    "revenueTable": "Revenue by district",
+    "revenueTable": "Revenue By District",
+    "revenueCustomerTable": "Top 30 Revenue Customers",
     "totalShipments": "Total Shipments",
     "totalRevenue": "Total Revenue (Millions Unit)",
     "chartCategories": [

@@ -26,7 +26,8 @@
 
       <div class="col-12" v-if="table2.data.length > 0">
         <card class="card-plain">
-          <span class="text-primary" style="text-transform: uppercase">{{table2.customerName}} - Order History</span>
+          <div class="text-primary" style="text-transform: uppercase">{{table2.customerName}} - Order History</div>
+          <div class="text-danger" style="text-transform: uppercase">Purchased times: {{table2.data.length}} - {{table2.total}}</div>
 
           <div class="table-full-width table-responsive">
             <base-table :title="table2.title" :sub-title="table2.subTitle" :data="table2.data"
@@ -61,6 +62,7 @@ export default {
         data: []
       },
       table2: {
+        total: '',
         columns: [...historyColumns],
         customerName: '',
         data: []
@@ -102,10 +104,14 @@ export default {
       .then(response => {
         if(response.data.data) {
           let orders = [];
+          let totalPrice = 0.0;
+
           response.data.data.forEach(element => {
-            orders.push({name: element.OrderNo, cod: this.formatPrice(element.Cod), date: this.convertDate(element.ConfirmedDate) ,status: element.Status})
+            totalPrice += element.Cod;
+            orders.push({name: element.OrderNo, cod: this.formatPrice(element.Cod), date: this.convertDate(element.ConfirmedDate) ,status: element.Status});
           });
 
+          this.table2.total = this.formatPrice(totalPrice);
           this.table2.data = orders;
         }
       })
