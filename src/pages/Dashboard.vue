@@ -1,5 +1,30 @@
 <template>
   <div>
+    <div class="btn-toolbar">
+      <div class="btn-group">
+      <base-dropdown title="Quarter" title-classes="btn btn-info">
+        <a class="dropdown-item" href="#">Quater 1</a>
+        <a class="dropdown-item" href="#">Quater 2</a>
+        <a class="dropdown-item" href="#">Quater 3</a>
+        <a class="dropdown-item" href="#">Quater 4</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="#">Whole Year</a>
+      </base-dropdown>
+      <span class="invisible">i</span>
+
+      <base-dropdown title="Year" title-classes="btn btn-success">
+        <a class="dropdown-item" href="#">2020</a>
+        <a class="dropdown-item" href="#">2021</a>
+      </base-dropdown>
+      </div>
+
+      <div class="float-right">
+       <base-button type="primary" style="margin-top: -1px; position: absolute; right: 15px;">Apply</base-button>
+      </div>
+    </div>
+    
+    <p></p>
+
     <div class="row">
       <div class="col-lg-6 col-md-12" :class="{'text-right': isRTL}">
         <card type="chart">

@@ -27,7 +27,7 @@
       <div class="col-12" v-if="table2.data.length > 0">
         <card class="card-plain">
           <div class="text-primary" style="text-transform: uppercase">{{table2.customerName}} - Order History</div>
-          <div class="text-danger" style="text-transform: uppercase">Purchased times: {{table2.data.length}} - {{table2.total}}</div>
+          <div class="text-info" style="text-transform: uppercase">Purchased times: {{table2.data.length}} - {{table2.total}}</div>
 
           <div class="table-full-width table-responsive">
             <base-table :title="table2.title" :sub-title="table2.subTitle" :data="table2.data"
@@ -129,6 +129,12 @@ export default {
        return  price.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
       }
       return price;
+    }
+  },
+  mounted() {
+    if (this.$route.query.id) {
+      this.searchTerm = this.$route.query.id;
+      this.searchCustomers();
     }
   }
 };

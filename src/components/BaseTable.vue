@@ -13,7 +13,8 @@
         <td v-for="(column, index) in columns"
             :key="index"
             v-if="hasValue(item, column)">
-          {{itemValue(item, column)}}
+            <router-link :to="{ path: 'search-customers', query: {id: itemValue(item, routeParamName)} }" v-if="routeColumnName && column.toLowerCase() === routeColumnName">{{itemValue(item, column)}}</router-link>
+            <span v-else>{{itemValue(item, column)}}</span>
         </td>
         <td v-if="viewAction">
           <a href="#" v-on:click="viewOrderHistory(item.phone)">View Orders</a>
@@ -56,6 +57,12 @@
       viewAction: {
         type: Boolean,
         default: false
+      },
+      routeColumnName: {
+        type: String
+      },
+      routeParamName: {
+        type: String
       }
     },
     computed: {

@@ -1,6 +1,8 @@
 <template>
   <base-table :data="revenueCustomerTable.data"
               :columns="revenueCustomerTable.columns"
+              route-column-name="name"
+              route-param-name="phone"
               thead-classes="text-primary">
   </base-table>
 </template>
@@ -48,7 +50,7 @@
         if(response.data.data) {
           let results = [];
           response.data.data.forEach(element => {
-            results.push({name: element.Name, count: element.Count, district: element.District, total: this.formatPrice(element.Total)})
+            results.push({name: element.Name, count: element.Count, district: element.District, phone: element.Phone, total: this.formatPrice(element.Total)})
           });
 
           this.revenueCustomerTable.data = results;
