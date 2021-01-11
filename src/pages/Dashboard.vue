@@ -2,24 +2,22 @@
   <div>
     <div class="btn-toolbar">
       <div class="btn-group">
-      <base-dropdown title="Quarter" title-classes="btn btn-info">
-        <a class="dropdown-item" href="#">Quater 1</a>
-        <a class="dropdown-item" href="#">Quater 2</a>
-        <a class="dropdown-item" href="#">Quater 3</a>
-        <a class="dropdown-item" href="#">Quater 4</a>
+      <base-dropdown :title="quater.label" title-classes="btn btn-info" >
+        <a class="dropdown-item" v-for="item in quaters" :key="item.label" v-on:click="quarterChange({label: item.label, value: item.value})">
+          {{item.label}}
+        </a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="#">Whole Year</a>
+        <a class="dropdown-item" v-on:click="quarterChange({label: 'All', value: getWholeCurrentYearTS()})">All</a>
       </base-dropdown>
       <span class="invisible">i</span>
 
-      <base-dropdown title="Year" title-classes="btn btn-success">
-        <a class="dropdown-item" href="#">2020</a>
-        <a class="dropdown-item" href="#">2021</a>
+      <base-dropdown :title="yearTitle" title-classes="btn btn-success">
+        <a class="dropdown-item" v-for="item in getYears()" :key="item" v-on:click="yearChange(item)">{{item}}</a>
       </base-dropdown>
       </div>
 
       <div class="float-right">
-       <base-button type="primary" style="margin-top: -1px; position: absolute; right: 15px;">Apply</base-button>
+       <base-button type="primary" style="margin-top: 0px; position: absolute; right: 15px;" v-on:click="updateRevenueChart">Apply</base-button>
       </div>
     </div>
     
@@ -88,12 +86,35 @@
         loaded: false,
         chartdata: null,
         totalRevenueStr: '',
+        quater: {
+          label: 'Quarter',
+          value: '',
+        },
+        yearTitle: new Date().getFullYear().toString(),
 
         revenueLineChartOpts: {
           extraOptions: chartConfigs.purpleChartOptions,
           gradientColors: config.colors.primaryGradient,
           gradientStops: [1, 0.2, 0],
         },
+        quaters: {
+          quater1: {
+            label: 'Quater 1',
+            value: '@year-01-01 00:00:00&@year-03-31 23:59:59'
+          },
+          quater2: {
+            label: 'Quater 2',
+            value: '@year-04-01 00:00:00&@year-06-30 23:59:59'
+          },
+          quater3: {
+            label: 'Quater 3',
+            value: '@year-07-01 00:00:00&@year-09-30 23:59:59'
+          },
+          quater4: {
+            label: 'Quater 4',
+            value: '@year-10-01 00:00:00&@year-12-31 23:59:59'
+          },
+        }
       }
     },
     computed: {
@@ -121,47 +142,77 @@
     
         : Math.abs(Number(labelValue));
       }, 
+      quarterChange(item) {
+        item.value = item.value.replaceAll('@year', this.yearTitle);
+        this.quater = item;
+      },
+      yearChange(value) {
+        this.quater.value = this.quater.value.replaceAll(this.yearTitle, value.toString());
+        this.yearTitle = value.toString();
+      },
+      getYears() {
+        let years = [];
+        const currentYear = new Date().getFullYear();
+        for (let i = currentYear - 2; i <= currentYear; i++) {
+          years.push(i);
+        }
+        return years;
+      },
+      getWholeCurrentYearTS() {
+        return `@year-01-01 00:00:00&@year-12-31 23:59:59`;
+      },
+      renderRevenueChart(result) {
+          let priceData = [];
+          let totalRevenue = 0.0;
+          result.data.data.forEach(e => {
+            totalRevenue += e;
+            priceData.push(this.formatToMillion(e))
+          });
+          this.totalRevenueStr = this.formatPrice(totalRevenue);
+
+          this.chartdata = {
+            labels: result.data.labels,
+            datasets: [{
+              label: "Data",
+              fill: true,
+              borderColor: config.colors.primary,
+              borderWidth: 2,
+              borderDash: [],
+              borderDashOffset: 0.0,
+              pointBackgroundColor: config.colors.primary,
+              pointBorderColor: 'rgba(255,255,255,0)',
+              pointHoverBackgroundColor: config.colors.primary,
+              pointBorderWidth: 20,
+              pointHoverRadius: 4,
+              pointHoverBorderWidth: 15,
+              pointRadius: 4,
+              data: priceData,
+            }]
+          };
+
+          this.loaded = true
+      },
+      async updateRevenueChart() {
+        this.loaded = false
+        try {
+          const timeTS = this.quater.value.split('&');
+          let result = await axios.get(`${config.api.url}/dashboard/revenueByMonth?start=${timeTS[0]}&end=${timeTS[1]}`);
+          this.renderRevenueChart(result);
+        } catch (e) {
+          console.error(e)
+        }
+      }
     },
     async mounted() {
       this.i18n = this.$i18n;
+
+      //get current quarter
+      const today = new Date();
+      const quarter = Math.floor((today.getMonth() + 3) / 3);
+      let currentQuarter = this.quaters[`quater${quarter}`];
+      this.quarterChange(currentQuarter);
       
-      this.loaded = false
-      try {
-        let result = await axios.get(`${config.api.url}/dashboard/revenueByMonth`);
-
-        let priceData = [];
-        let totalRevenue = 0.0;
-        result.data.data.forEach(e => {
-          totalRevenue += e;
-          priceData.push(this.formatToMillion(e))
-        });
-        this.totalRevenueStr = this.formatPrice(totalRevenue);
-
-        this.chartdata = {
-          labels: result.data.labels,
-          datasets: [{
-            label: "Data",
-            fill: true,
-            borderColor: config.colors.primary,
-            borderWidth: 2,
-            borderDash: [],
-            borderDashOffset: 0.0,
-            pointBackgroundColor: config.colors.primary,
-            pointBorderColor: 'rgba(255,255,255,0)',
-            pointHoverBackgroundColor: config.colors.primary,
-            pointBorderWidth: 20,
-            pointHoverRadius: 4,
-            pointHoverBorderWidth: 15,
-            pointRadius: 4,
-            data: priceData,
-          }]
-        };
-
-        this.loaded = true
-      } catch (e) {
-        console.error(e)
-      }
-
+      this.updateRevenueChart();
     },
     beforeDestroy() {
       if (this.$rtl.isRTL) {
