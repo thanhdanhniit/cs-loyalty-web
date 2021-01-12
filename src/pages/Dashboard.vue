@@ -73,6 +73,7 @@
   import RevenueCustomerTable from './Dashboard/RevenueCustomerTable';
 
   import config from '@/config';
+  import util from '@/commonUtils';
   import axios from "axios"
 
   export default {
@@ -88,7 +89,7 @@
         totalRevenueStr: '',
         quater: {
           label: 'Quarter',
-          value: '2021-01-01 00:00:00&2021-03-31 23:59:59',
+          value: '',
         },
         queryTimeRange: '',
         yearTitle: new Date().getFullYear().toString(),
@@ -127,22 +128,6 @@
       formatToMillion (labelValue) {
         return labelValue / 1000000
       },
-      formatPrice (labelValue) {
-        // Nine Zeroes for Billions
-        return Math.abs(Number(labelValue)) >= 1.0e+9
-    
-        ? Math.abs(Number(labelValue)) / 1.0e+9 + "B"
-        // Six Zeroes for Millions 
-        : Math.abs(Number(labelValue)) >= 1.0e+6
-    
-        ? Math.abs(Number(labelValue)) / 1.0e+6 + "M"
-        // Three Zeroes for Thousands
-        : Math.abs(Number(labelValue)) >= 1.0e+3
-    
-        ? Math.abs(Number(labelValue)) / 1.0e+3 + "K"
-    
-        : Math.abs(Number(labelValue));
-      }, 
       quarterChange(item) {
         item.value = item.value.replaceAll('@year', this.yearTitle);
         this.quater = item;
@@ -169,7 +154,7 @@
             totalRevenue += e;
             priceData.push(this.formatToMillion(e))
           });
-          this.totalRevenueStr = this.formatPrice(totalRevenue);
+          this.totalRevenueStr = util.formatToShortPrice(totalRevenue);
 
           this.chartdata = {
             labels: result.data.labels,

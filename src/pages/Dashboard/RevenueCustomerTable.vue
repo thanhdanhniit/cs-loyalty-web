@@ -10,6 +10,7 @@
   import { BaseTable } from "@/components";
   import config from '@/config';
   import axios from "axios";
+  import util from '@/commonUtils';
 
   export default {
     components: {
@@ -27,22 +28,6 @@
     computed: {
     },
     methods: {
-      formatPrice (labelValue) {
-        // Nine Zeroes for Billions
-        return Math.abs(Number(labelValue)) >= 1.0e+9
-    
-        ? Math.abs(Number(labelValue)) / 1.0e+9 + "B"
-        // Six Zeroes for Millions 
-        : Math.abs(Number(labelValue)) >= 1.0e+6
-    
-        ? Math.abs(Number(labelValue)) / 1.0e+6 + "M"
-        // Three Zeroes for Thousands
-        : Math.abs(Number(labelValue)) >= 1.0e+3
-    
-        ? Math.abs(Number(labelValue)) / 1.0e+3 + "K"
-    
-        : Math.abs(Number(labelValue));
-      },
       fetchData() {
         if (this.timeRange) {
           const timeTS = this.timeRange.split('&');
@@ -53,7 +38,7 @@
             if(response.data.data) {
               let results = [];
               response.data.data.forEach(element => {
-                results.push({name: element.Name, count: element.Count, district: element.District, phone: element.Phone, total: this.formatPrice(element.Total)})
+                results.push({name: element.Name, count: element.Count, district: element.District, phone: element.Phone, total: util.formatToShortPrice(element.Total)})
               });
 
               this.revenueCustomerTable.data = results;

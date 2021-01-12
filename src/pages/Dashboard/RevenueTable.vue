@@ -8,12 +8,13 @@
   import { BaseTable } from "@/components";
   import config from '@/config';
   import axios from "axios";
+  import util from '@/commonUtils';
 
   export default {
     components: {
       BaseTable
     },
-    props: ['initTimeRange', 'timeRange'],
+    props: ['timeRange'],
     data() {
       return {
         revenueTable: {
@@ -22,15 +23,7 @@
         }
       }
     },
-    computed: {
-    },
     methods: {
-      formatPrice(price) {
-        if (price && price > 0) {
-          return  price.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
-        }
-        return price;
-      },
       fetchData() {
         if (this.timeRange) {
           const timeTS = this.timeRange.split('&');
@@ -41,7 +34,7 @@
             if(response.data.data) {
               let results = [];
               response.data.data.forEach(element => {
-                results.push({district: element.District, total: this.formatPrice(element.Total)})
+                results.push({district: element.District, total: util.formatToVndPrice(element.Total)})
               });
 
               this.revenueTable.data = results;

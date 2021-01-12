@@ -45,6 +45,7 @@ import { BaseTable } from "@/components";
 import axios from "axios"
 import moment from "moment"
 import config from '@/config';
+import util from '@/commonUtils';
 
 const tableColumns = ["Name", "Phone"];
 const historyColumns = ["Date", "Cod", "Status"]
@@ -108,10 +109,10 @@ export default {
 
           response.data.data.forEach(element => {
             totalPrice += element.Cod;
-            orders.push({name: element.OrderNo, cod: this.formatPrice(element.Cod), date: this.convertDate(element.ConfirmedDate) ,status: element.Status});
+            orders.push({name: element.OrderNo, cod: util.formatToVndPrice(element.Cod), date: this.convertDate(element.ConfirmedDate) ,status: element.Status});
           });
 
-          this.table2.total = this.formatPrice(totalPrice);
+          this.table2.total = util.formatToVndPrice(totalPrice);
           this.table2.data = orders;
         }
       })
@@ -124,12 +125,6 @@ export default {
       }
       return dateStr;
     },
-    formatPrice(price) {
-      if (price && price > 0) {
-       return  price.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
-      }
-      return price;
-    }
   },
   mounted() {
     if (this.$route.query.id) {
