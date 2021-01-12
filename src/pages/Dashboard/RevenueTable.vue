@@ -13,6 +13,7 @@
     components: {
       BaseTable
     },
+    props: ['initTimeRange', 'timeRange'],
     data() {
       return {
         revenueTable: {
@@ -30,20 +31,34 @@
         }
         return price;
       },
+      fetchData() {
+        if (this.timeRange) {
+          const timeTS = this.timeRange.split('&');
+
+          axios
+          .get(`${config.api.url}/dashboard/revenueByDistrict?start=${timeTS[0]}&end=${timeTS[1]}`)
+          .then(response => {
+            if(response.data.data) {
+              let results = [];
+              response.data.data.forEach(element => {
+                results.push({district: element.District, total: this.formatPrice(element.Total)})
+              });
+
+              this.revenueTable.data = results;
+            }
+          })
+        }
+      }
     },
     mounted() {
-      axios
-      .get(`${config.api.url}/dashboard/revenueByDistrict`)
-      .then(response => {
-        if(response.data.data) {
-          let results = [];
-          response.data.data.forEach(element => {
-            results.push({district: element.District, total: this.formatPrice(element.Total)})
-          });
-
-          this.revenueTable.data = results;
+      this.$watch('timeRange', (newVal, oldVal) => {
+        if (newVal) {
+          console.log("timeRange-change", newVal);
+          this.fetchData();
         }
-      })
+      });
+
+      this.fetchData();
     },
   }
 </script>

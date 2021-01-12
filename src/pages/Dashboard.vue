@@ -17,7 +17,7 @@
       </div>
 
       <div class="float-right">
-       <base-button type="primary" style="margin-top: 0px; position: absolute; right: 15px;" v-on:click="updateRevenueChart">Apply</base-button>
+       <base-button type="primary" style="margin-top: 0px; position: absolute; right: 15px;" v-on:click="updateDashboard">Apply</base-button>
       </div>
     </div>
     
@@ -49,7 +49,7 @@
         <card class="card" :header-classes="{'text-right': isRTL}">
           <h4 slot="header" class="card-title">{{$t('dashboard.revenueCustomerTable')}}</h4>
           <div class="table-responsive" style="max-height:465px;">
-            <revenue-customer-table></revenue-customer-table>
+            <revenue-customer-table :time-range="queryTimeRange"></revenue-customer-table>
           </div>
         </card>
       </div>
@@ -58,7 +58,7 @@
         <card class="card" :header-classes="{'text-right': isRTL}">
           <h4 slot="header" class="card-title">{{$t('dashboard.revenueTable')}}</h4>
           <div class="table-responsive" style="max-height:480px;">
-            <revenue-table></revenue-table>
+            <revenue-table :init-time-range="quater.value" :time-range="queryTimeRange"></revenue-table>
           </div>
         </card>
       </div>
@@ -88,8 +88,9 @@
         totalRevenueStr: '',
         quater: {
           label: 'Quarter',
-          value: '',
+          value: '2021-01-01 00:00:00&2021-03-31 23:59:59',
         },
+        queryTimeRange: '',
         yearTitle: new Date().getFullYear().toString(),
 
         revenueLineChartOpts: {
@@ -192,7 +193,10 @@
 
           this.loaded = true
       },
-      async updateRevenueChart() {
+      async updateDashboard() {
+        // update time range for table
+        this.queryTimeRange = this.quater.value;
+
         this.loaded = false
         try {
           const timeTS = this.quater.value.split('&');
@@ -211,8 +215,8 @@
       const quarter = Math.floor((today.getMonth() + 3) / 3);
       let currentQuarter = this.quaters[`quater${quarter}`];
       this.quarterChange(currentQuarter);
-      
-      this.updateRevenueChart();
+
+      this.updateDashboard();
     },
     beforeDestroy() {
       if (this.$rtl.isRTL) {

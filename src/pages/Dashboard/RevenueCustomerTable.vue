@@ -15,6 +15,7 @@
     components: {
       BaseTable
     },
+    props: ['timeRange'],
     data() {
       return {
         revenueCustomerTable: {
@@ -41,21 +42,35 @@
         ? Math.abs(Number(labelValue)) / 1.0e+3 + "K"
     
         : Math.abs(Number(labelValue));
+      },
+      fetchData() {
+        if (this.timeRange) {
+          const timeTS = this.timeRange.split('&');
+
+          axios
+          .get(`${config.api.url}/dashboard/topPurchasedCustomers?start=${timeTS[0]}&end=${timeTS[1]}`)
+          .then(response => {
+            if(response.data.data) {
+              let results = [];
+              response.data.data.forEach(element => {
+                results.push({name: element.Name, count: element.Count, district: element.District, phone: element.Phone, total: this.formatPrice(element.Total)})
+              });
+
+              this.revenueCustomerTable.data = results;
+            }
+          });
+        }
       }
     },
     mounted() {
-      axios
-      .get(`${config.api.url}/dashboard/topPurchasedCustomers`)
-      .then(response => {
-        if(response.data.data) {
-          let results = [];
-          response.data.data.forEach(element => {
-            results.push({name: element.Name, count: element.Count, district: element.District, phone: element.Phone, total: this.formatPrice(element.Total)})
-          });
-
-          this.revenueCustomerTable.data = results;
+      this.$watch('timeRange', (newVal, oldVal) => {
+        if (newVal) {
+          console.log("timeRange-change", newVal);
+          this.fetchData();
         }
-      })
+      });
+
+      this.fetchData();
     },
   }
 </script>
