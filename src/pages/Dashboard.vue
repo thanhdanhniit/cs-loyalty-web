@@ -24,13 +24,13 @@
     <p></p>
 
     <div class="row">
-      <div class="col-lg-6 col-md-12" v-if="!chartdata || chartdata.labels.length == 0">
+      <div class="col-lg-12 col-md-12" v-if="!chartdata || chartdata.labels.length == 0">
         <card class="card" style="height: 100px">
           <div class="text-center">No data available</div>
         </card>
       </div>
 
-      <div class="col-lg-6 col-md-12" v-if="chartdata && chartdata.labels.length > 0">
+      <div class="col-lg-12 col-md-12" v-if="chartdata && chartdata.labels.length > 0">
         <card type="chart">
           <template slot="header">
             <h5 class="card-category">{{$t('dashboard.totalRevenue')}}</h5>

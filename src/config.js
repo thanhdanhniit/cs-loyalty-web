@@ -8,6 +8,6 @@ export default {
     primaryGradient: ['rgba(76, 211, 150, 0.1)', 'rgba(53, 183, 125, 0)', 'rgba(119,52,169,0)'],
   },
   api: {
-    url: 'http://localhost:8080'
+    url: 'http://cs-apis.2cherryshop.com:8080'
   }
 }
