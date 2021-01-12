@@ -50,7 +50,6 @@
     mounted() {
       this.$watch('timeRange', (newVal, oldVal) => {
         if (newVal) {
-          console.log("timeRange-change", newVal);
           this.fetchData();
         }
       });

@@ -24,7 +24,13 @@
     <p></p>
 
     <div class="row">
-      <div class="col-lg-6 col-md-12" :class="{'text-right': isRTL}">
+      <div class="col-lg-6 col-md-12" v-if="!chartdata || chartdata.labels.length == 0">
+        <card class="card" style="height: 100px">
+          <div class="text-center">No data available</div>
+        </card>
+      </div>
+
+      <div class="col-lg-6 col-md-12" v-if="chartdata && chartdata.labels.length > 0">
         <card type="chart">
           <template slot="header">
             <h5 class="card-category">{{$t('dashboard.totalRevenue')}}</h5>
@@ -44,7 +50,7 @@
 
     </div>
     
-    <div class="row">
+    <div class="row" v-if="chartdata && chartdata.labels.length > 0">
       <div class="col-lg-6 col-md-12">
         <card class="card" :header-classes="{'text-right': isRTL}">
           <h4 slot="header" class="card-title">{{$t('dashboard.revenueCustomerTable')}}</h4>
@@ -150,14 +156,18 @@
       renderRevenueChart(result) {
           let priceData = [];
           let totalRevenue = 0.0;
-          result.data.data.forEach(e => {
-            totalRevenue += e;
-            priceData.push(this.formatToMillion(e))
-          });
-          this.totalRevenueStr = util.formatToShortPrice(totalRevenue);
+          this.totalRevenueStr = '';
 
+          if (result.data.data) {
+            result.data.data.forEach(e => {
+              totalRevenue += e;
+              priceData.push(this.formatToMillion(e))
+            });
+            this.totalRevenueStr = util.formatToShortPrice(totalRevenue);
+          }
+          
           this.chartdata = {
-            labels: result.data.labels,
+            labels: result.data.labels ? result.data.labels : [],
             datasets: [{
               label: "Data",
               fill: true,
